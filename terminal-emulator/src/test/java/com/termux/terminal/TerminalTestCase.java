@@ -18,7 +18,7 @@ public abstract class TerminalTestCase extends TestCase {
 		public final List<ChangedTitle> titleChanges = new ArrayList<>();
 		public final List<String> clipboardPuts = new ArrayList<>();
 		public int bellsRung = 0;
-        public int colorsChanged = 0;
+		public int colorsChanged = 0;
 
 		@Override
 		public void write(byte[] data, int offset, int count) {
@@ -26,10 +26,10 @@ public abstract class TerminalTestCase extends TestCase {
 		}
 
 		public String getOutputAndClear() {
-            String result = new String(baos.toByteArray(), StandardCharsets.UTF_8);
-            baos.reset();
-            return result;
-        }
+			String result = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+			baos.reset();
+			return result;
+		}
 
 		@Override
 		public void titleChanged(String oldTitle, String newTitle) {
@@ -37,20 +37,24 @@ public abstract class TerminalTestCase extends TestCase {
 		}
 
 		@Override
-		public void clipboardText(String text) {
+		public void onCopyTextToClipboard(String text) {
 			clipboardPuts.add(text);
 		}
+
+        @Override
+        public void onPasteTextFromClipboard() {
+        }
 
 		@Override
 		public void onBell() {
 			bellsRung++;
 		}
 
-        @Override
-        public void onColorsChanged() {
-            colorsChanged++;
-        }
-    }
+		@Override
+		public void onColorsChanged() {
+			colorsChanged++;
+		}
+	}
 
 	public TerminalEmulator mTerminal;
 	public MockTerminalOutput mOutput;
@@ -103,7 +107,8 @@ public abstract class TerminalTestCase extends TestCase {
 	}
 
 	protected TerminalTestCase withTerminalSized(int columns, int rows) {
-		mTerminal = new TerminalEmulator(mOutput, columns, rows, rows * 2);
+	    // The tests aren't currently using the client, so a null client will suffice, a dummy client should be implemented if needed
+		mTerminal = new TerminalEmulator(mOutput, columns, rows, rows * 2, null);
 		return this;
 	}
 
